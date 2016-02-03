@@ -73,7 +73,7 @@ function processAllArticles(dirname, res) {
           console.log("Processed " + (i+1) + " files. " + (len - (i+1)) + " remaining.");
         }
       }); // end readFile callback
-    })(i) // end closure. Had to pass the iterator in like this due to async bs.
+    })(i) // Immediately invoked function expression. Had to pass the iterator in like this due to async bs.
     } // end loop
   }); // end readdir callback
 }
