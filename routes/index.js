@@ -57,7 +57,7 @@ function processAllArticles(dirname, res) {
     for (var i = 0, len = filenames.length; i < len; i++) {
       // Need to use a closure because of async/scope hell
       (function(i) {
-      console.log(filenames[i]); // This part seems to work
+      // console.log(filenames[i]); // This part seems to work
       var currentFilePath = dirname + '/' + filenames[i];
       //console.log("Trying to pass in " + currentFilePath);
       fs.readFile(currentFilePath, function(err, content) {
@@ -69,10 +69,10 @@ function processAllArticles(dirname, res) {
           console.log("Ready to render " + articles.length + " article objects.");
           res.render('index', { articles: articles });
         } else {
-          console.log("Processed " + i + "files. " + (len - i) + " remaining.");
+          console.log("Processed " + i + " files. " + (len - i) + " remaining.");
         }
       }); // end readFile callback
-    })(i) // end closure
+    })(i) // end closure. Had to pass the iterator in like this due to async bs.
     } // end loop
   }); // end readdir callback
 }
