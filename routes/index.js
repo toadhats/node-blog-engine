@@ -55,7 +55,7 @@ function processAllArticles(dirname, res) {
     }
     // Array.foreach is 95% slower than a regular for loop apparently
     for (var i = 0, len = filenames.length; i < len; i++) {
-      // Need to use a closure because of async/scope hell
+      // Need to use a closure because we are in async hell rn
       (function(i) {
       // console.log(filenames[i]); // This part seems to work
       var currentFilePath = dirname + '/' + filenames[i];
@@ -69,7 +69,7 @@ function processAllArticles(dirname, res) {
           console.log("Ready to render " + articles.length + " article objects.");
           res.render('index', { articles: articles });
         } else {
-          console.log("Processed " + i + " files. " + (len - i) + " remaining.");
+          console.log("Processed " + (i+1) + " files. " + (len - (i+1)) + " remaining.");
         }
       }); // end readFile callback
     })(i) // end closure. Had to pass the iterator in like this due to async bs.
