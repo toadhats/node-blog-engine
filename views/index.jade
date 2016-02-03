@@ -1,5 +1,15 @@
 extends layout
 
+//- mixin postSummary(post)
+//-     h2= post.attributes.title
+//-     h3= post.attributes.author.name
+//-     h4= post.attributes.date
+//-     .article
+//-         p= post.body
+
 block content
-  h1= title
-  p Welcome to #{title}
+
+  h2 Test posts
+  ul
+    each article in articles
+      h1= article.attributes.title
