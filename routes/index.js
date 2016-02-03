@@ -61,7 +61,8 @@ function processAllArticles(dirname, res) {
       var currentFilePath = dirname + '/' + filenames[i];
       //console.log("Trying to pass in " + currentFilePath);
       fs.readFile(currentFilePath, function(err, content) {
-        articles[i] = processArticle(content)
+        articles[i] = processArticle(content);
+        articles[i].path = currentFilePath;
         console.log("Processed article " + articles[i].attributes.title);
 
         // This is an ugly way of doing this. I should be using promises or generators instead I think.
