@@ -3,6 +3,7 @@ var express = require('express');
 var fs = require('fs');
 var router = express.Router();
 var fm = require('front-matter');
+var moment = require('moment');
 
 // Adapted from http://stackoverflow.com/a/10049704/3959735
 // Takes a directory name, a function to handle the files, and a function to handle any errors
@@ -63,10 +64,13 @@ function processAllArticles(dirname, res) {
       fs.readFile(currentFilePath, function(err, content) {
         articles[i] = processArticle(content);
         articles[i].path = currentFilePath;
+        articles[i].date = Date.parse(articles[i].date); // Trying to parse to date type for consistency
         console.log("Processed article " + articles[i].attributes.title);
 
         // This is an ugly way of doing this. I should be using promises or generators instead I think.
         if (i == len - 1 ) {
+          console.log("Sorting articles by date (descending)");
+          articles = sortByDate(articles); // This isn't working properly.
           console.log("Ready to render " + articles.length + " article objects.");
           res.render('index', { articles: articles });
         } else {
@@ -77,6 +81,29 @@ function processAllArticles(dirname, res) {
     } // end loop
   }); // end readdir callback
 }
+
+/* Function that generates a sort function for a given field
+   Adapted from http://stackoverflow.com/a/979325/3959735
+   Primer parameter is a function that is applied to the field value before comparison.
+*/
+var sortBy = function(field, reverse, primer){
+
+  var key = primer ?
+  function(x) {return primer(x[field])} :
+  function(x) {return x[field]};
+
+  reverse = !reverse ? 1 : -1;
+
+  return function (a, b) {
+    return a = key(a), b = key(b), reverse * ((a > b) - (b > a));
+  };
+};
+
+// Function to sort articles array by date
+function sortByDate(articleArray) {
+  return articleArray.sort(sortBy('date', true, false));
+}
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
