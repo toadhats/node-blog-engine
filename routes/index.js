@@ -38,9 +38,10 @@ function processArticle(content) {
     console.error("Didn't get any article content!");
     return;
   }
-  if (fm.test(content)) {
-  } else {
-    console.log("Front-matter considers this content invalid!");
+
+  if (!fm.test(content)) {
+    console.log("Bad content: " + content);
+    console.error("Front-matter considers this content invalid!");
   }
   var article = fm(content.toString());
   return article;
@@ -64,8 +65,10 @@ function processAllArticles(dirname, res) {
       fs.readFile(currentFilePath, function(err, content) {
         articles[i] = processArticle(content);
         articles[i].path = currentFilePath;
-        articles[i].date = Date.parse(articles[i].date); // Trying to parse to date type for consistency
-        console.log("Processed article " + articles[i].attributes.title);
+        articles[i].attributes.date = moment(articles[i].attributes.date); // Trying to parse to date type for consistency
+        console.log(articles[i].attributes.date) // Testing the jsdate conversion
+
+        //console.log("Processed article " + articles[i].attributes.title);
 
         // This is an ugly way of doing this. I should be using promises or generators instead I think.
         if (i == len - 1 ) {
@@ -74,7 +77,7 @@ function processAllArticles(dirname, res) {
           console.log("Ready to render " + articles.length + " article objects.");
           res.render('index', { articles: articles });
         } else {
-          console.log("Processed " + (i+1) + " files. " + (len - (i+1)) + " remaining.");
+          //console.log("Processed " + (i+1) + " files. " + (len - (i+1)) + " remaining.");
         }
       }); // end readFile callback
     })(i) // Immediately invoked function expression. Had to pass the iterator in like this due to async bs.
@@ -99,9 +102,16 @@ var sortBy = function(field, reverse, primer){
   };
 };
 
+// Compare dates to sort
+function compareDates(a,b) {
+	if(a.attributes.date.unix() < b.attributes.date.unix()) return -1;
+	if(a.attributes.date.unix() > b.attributes.date.unix()) return 1;
+	return 0;
+}
+
 // Function to sort articles array by date
 function sortByDate(articleArray) {
-  return articleArray.sort(sortBy('date', true, false));
+  return articleArray.sort(compareDates).reverse();
 }
 
 
