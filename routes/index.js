@@ -30,22 +30,42 @@ function fileRetrievalTest(filename, content) {
   console.log("There is a file called " + filename);
 }
 
-/* Processes an article file to create an article object
-Structure = {attributes: {title: 'Title', author: 'Don Dingus'}, body: 'Article text etc'}
-*/
+// Processes an article file to create an article object
 function processArticle(content) {
   if (!content) {
     console.error("Didn't get any article content!");
     return;
   }
-
   if (!fm.test(content)) {
-    console.log("Bad content: " + content);
+    console.error("Bad content: " + content);
     console.error("Front-matter considers this content invalid!");
   }
-  var article = fm(content.toString());
+  var article = fm(content.toString()); // We have an article object
   return article;
 }
+
+/*
+attributes: {
+    title: "Auth0's Security Buzz just launched!"
+    description: Our new channel for sharing our thoughts on security
+    date: Moment.js object
+    author:
+        {
+        name: Diego Poza,
+        url: https://twitter.com/diegopoza,
+        avatar: https://avatars3.githubusercontent.com/u/604869?v=3&s=200,
+        mail: diego.poza@auth0.com
+        }
+    design:
+        {
+        bg_color: "#254973",
+        image: https://cdn.auth0.com/blog/announcing-security-buzz/logo.png
+        }
+    tags:
+     [security buzz, security news]
+    },
+body: Actual text of the article.
+*/
 
 // Returns an array of processed article objects. Serious pyramid of doom, desperately needs to be refactored/nuked from orbit.
 function processAllArticles(dirname, res) {
