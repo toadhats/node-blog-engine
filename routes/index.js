@@ -41,6 +41,11 @@ function processArticle(content) {
     console.error("Front-matter considers this content invalid!");
   }
   var article = fm(content.toString()); // We have an article object
+  article.attributes.date = moment(article.attributes.date); // Parsing to date type for consistency
+  // Rendering date back to string for display later
+  article.attributes.dateString = article.attributes.date.format("dddd, MMMM Do YYYY, h:mm a");
+
+
   return article;
 }
 
@@ -85,8 +90,7 @@ function processAllArticles(dirname, res) {
       fs.readFile(currentFilePath, function(err, content) {
         articles[i] = processArticle(content);
         articles[i].path = currentFilePath;
-        articles[i].attributes.date = moment(articles[i].attributes.date); // Trying to parse to date type for consistency
-        console.log(articles[i].attributes.date) // Testing the jsdate conversion
+        console.log(articles[i].attributes.dateString) // Testing the jsdate conversion
 
         //console.log("Processed article " + articles[i].attributes.title);
 
