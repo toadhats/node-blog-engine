@@ -2,12 +2,16 @@ extends layout
 
 mixin postSummary(post)
     h4= post.attributes.dateString
-    h2= post.attributes.title
+    h2 #[a(href=post.path) #{post.attributes.title}]
     h3= post.attributes.author.name
     
     .article
-        p= post.attributes.description
+        h4= post.attributes.description
         //- p= post.path
+        p(style={color: 'grey'})= post.attributes.tags
+          
+            
+          
 
 block content
 
