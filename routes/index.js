@@ -7,7 +7,7 @@ var fm = require('front-matter');
 var moment = require('moment');
 
 // Environment variables with default values
-var articlesPerPage = process.env.articlesPerPage || 10;
+var articlesPerPage = process.env.articlesPerPage || 5;
 var articlesPath = process.env.articlesPath || 'articles'; // Will probably never change, but just in case
 
 // Compare dates to sort
@@ -188,7 +188,7 @@ var sortBy = function(field, reverse, primer){
 /* GET article index. */
 router.get('/', function(req, res, next) {
   //processAllArticles(res);
-  processPage(res, 1)
+  processPage(res, 1);
 });
 
 /* GET paginated article index. */

@@ -3,12 +3,14 @@ extends layout
 block content
     
     header
-        h1= article.attributes.title
-        h3= article.attributes.author.name
-        h4(style={color: 'grey'})= article.attributes.date.format("dddd, MMMM Do YYYY, h:mm a")
+        h1(style="text-align: center")= article.attributes.title
+        span
+          img(src= article.attributes.author.avatar, style="padding: 10px", height= "200", width= "200")
+          strong(style="font-size: 200%; padding-left: 10px")= article.attributes.author.name
+        p: i(style="color: 'grey'; padding-left: 20px")= article.attributes.date.format("dddd, MMMM Do YYYY, h:mm a")
     
     article
-        div!= marked(article.body)
+        div(style="padding-left: 50px")!= marked(article.body)
       
     
 

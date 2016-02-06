@@ -22,13 +22,13 @@ block content
         +postSummary(article)
       hr
       
-  div(style="float: left;")
+  div(style="float: left")
     unless currentPage == 1
-      a(href='/page/'+prevPage) < Page #{prevPage} 
+      a(href='/page/'+prevPage): strong(style="font-size: 200%") < Page #{prevPage} 
       //- Because we're indexing from 0 at the moment...
     
   div(style="float: right;")
-    a(href='/page/'+nextPage) Page #{nextPage} >
+    a(href='/page/'+nextPage): strong(style="font-size: 200%") Page #{nextPage} >
   
     
 
