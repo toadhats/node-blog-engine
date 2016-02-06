@@ -106,7 +106,7 @@ function processAllArticles(dirname, res) {
   }); // end readdir callback
 }
 
-function processPage(dirname)
+
 
 /* Function that generates a sort function for a given field
    Adapted from http://stackoverflow.com/a/979325/3959735
