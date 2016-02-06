@@ -2,12 +2,13 @@ extends layout
           
 block content
     
-    h1= article.attributes.title
-    h3= article.attributes.author.name
-    h4(style={color: 'grey'})= article.attributes.date.format("dddd, MMMM Do YYYY, h:mm a")
+    header
+        h1= article.attributes.title
+        h3= article.attributes.author.name
+        h4(style={color: 'grey'})= article.attributes.date.format("dddd, MMMM Do YYYY, h:mm a")
     
-    .article
-      div!= marked(article.body)
+    article
+        div!= marked(article.body)
       
     
 

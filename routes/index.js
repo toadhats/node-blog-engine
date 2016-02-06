@@ -5,6 +5,9 @@ var router = express.Router();
 var fm = require('front-matter');
 var moment = require('moment');
 
+var articlesPerPage = process.env.articlesPerPage || 20;
+var articlesPath = process.env.articlesPath || 'articles'; // Will probably never change but just in case
+
 // Adapted from http://stackoverflow.com/a/10049704/3959735
 // Takes a directory name, a function to handle the files, and a function to handle any errors
 function readFiles(dirname, onFileContent, onError) {
@@ -102,6 +105,8 @@ function processAllArticles(dirname, res) {
     } // end loop
   }); // end readdir callback
 }
+
+function processPage(dirname)
 
 /* Function that generates a sort function for a given field
    Adapted from http://stackoverflow.com/a/979325/3959735

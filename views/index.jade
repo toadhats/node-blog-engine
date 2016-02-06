@@ -2,20 +2,20 @@ extends layout
 
 mixin postSummary(post)
     h4= post.attributes.date.format("dddd, MMMM Do YYYY, h:mm a")
-    h2 #[a(href=post.path) #{post.attributes.title}]
+    h2= post.attributes.title
     h3= post.attributes.author.name
     
     .article
         h4= post.attributes.description
         //- p= post.path
         p(style={color: 'grey'})= post.attributes.tags
-          
-            
-          
 
 block content
 
   ul
     each article in articles
-      +postSummary(article)
+      a(href=article.path)
+        +postSummary(article)
       hr
+
+// Is making the whole block/element/thing a link to the article good or bad? I've seen it before but I've also heard this kind of thing is very aggravating for vision impaired users reading a screen reader, as it leads to confusing descriptions of the page and makes it harder for them to follow the link.
