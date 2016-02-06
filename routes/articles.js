@@ -1,6 +1,7 @@
+"use strict";
 var express = require('express');
 var router = express.Router();
-var path = require("path")
+var path = require("path");
 var fs = require('fs');
 var fm = require('front-matter');
 var moment = require('moment');
@@ -23,13 +24,12 @@ function processArticle(content) {
 
 /* GET article */
 router.get('/:URN', function(req, res, next) {
-  articleFilePath = path.join('articles', req.params.URN + '.markdown');
-  console.log("Attempting to read " + articleFilePath);
+  var articleFilePath = path.join('articles', req.params.URN + '.markdown');
+  //console.log("Attempting to read " + articleFilePath);
   fs.readFile(articleFilePath, function(err, content) {
-    article = processArticle(content);
-    res.render('articles', { article: article})
-
-  }); // end readFile
+    var article = processArticle(content);
+    res.render('articles', { article: article });
+  });
 });
 
 module.exports = router;

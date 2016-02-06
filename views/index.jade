@@ -11,11 +11,25 @@ mixin postSummary(post)
         p(style={color: 'grey'})= post.attributes.tags
 
 block content
+  
+  - var currentPage = parseInt(page);
+  - var nextPage = parseInt(currentPage) + 1;
+  - var prevPage = parseInt(currentPage) - 1;
 
   ul
     each article in articles
-      a(href=article.path)
+      a(href='/'+article.path)
         +postSummary(article)
       hr
+      
+  div(style="float: left;")
+    unless currentPage == 1
+      a(href='/page/'+prevPage) < Page #{prevPage} 
+      //- Because we're indexing from 0 at the moment...
+    
+  div(style="float: right;")
+    a(href='/page/'+nextPage) Page #{nextPage} >
+  
+    
 
 // Is making the whole block/element/thing a link to the article good or bad? I've seen it before but I've also heard this kind of thing is very aggravating for vision impaired users reading a screen reader, as it leads to confusing descriptions of the page and makes it harder for them to follow the link.
