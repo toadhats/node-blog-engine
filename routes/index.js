@@ -41,9 +41,7 @@ function processArticle(content) {
     console.error("Front-matter considers this content invalid!");
   }
   var article = fm(content.toString()); // We have an article object
-  article.attributes.date = moment(article.attributes.date); // Parsing to date type for consistency/sorting/shenanigans
-  // Rendering date back to string for display later
-  //article.attributes.dateString = article.attributes.date.format("dddd, MMMM Do YYYY, h:mm a");
+  article.attributes.date = moment(article.attributes.date); // Parsing to date type for consistency/sorting/shenanigans. Remember to format() back to string from within jade
   return article;
 }
 
@@ -86,11 +84,9 @@ function processAllArticles(dirname, res) {
       var currentFilePath = dirname + '/' + filenames[i];
       //console.log("Trying to pass in " + currentFilePath);
       fs.readFile(currentFilePath, function(err, content) {
+        //console.log(currentFilePath);// debug delete
         articles[i] = processArticle(content);
         articles[i].path = currentFilePath.substr(0, currentFilePath.lastIndexOf('.'));//remove the extension
-        console.log(articles[i].attributes.dateString) // Testing the jsdate conversion
-
-        //console.log("Processed article " + articles[i].attributes.title);
 
         // This is an ugly way of doing this. I should be using promises or generators instead I think.
         if (i == len - 1 ) {
@@ -101,7 +97,7 @@ function processAllArticles(dirname, res) {
         } else {
           //console.log("Processed " + (i+1) + " files. " + (len - (i+1)) + " remaining.");
         }
-      }); // end readFile callback
+      }); // end readFile
     })(i) // Immediately invoked function expression. Had to pass the iterator in like this due to async bs.
     } // end loop
   }); // end readdir callback
@@ -137,7 +133,7 @@ function sortByDate(articleArray) {
 }
 
 
-/* GET home page. */
+/* GET article index. */
 router.get('/', function(req, res, next) {
   processAllArticles('articles', res);
 });

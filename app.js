@@ -9,6 +9,7 @@ var routes = require('./routes/index');
 var articles = require('./routes/articles');
 
 var app = express();
+app.locals.marked = require('marked');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
