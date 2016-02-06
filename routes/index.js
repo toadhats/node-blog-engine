@@ -43,7 +43,7 @@ function processArticle(content) {
   var article = fm(content.toString()); // We have an article object
   article.attributes.date = moment(article.attributes.date); // Parsing to date type for consistency/sorting/shenanigans
   // Rendering date back to string for display later
-  article.attributes.dateString = article.attributes.date.format("dddd, MMMM Do YYYY, h:mm a");
+  //article.attributes.dateString = article.attributes.date.format("dddd, MMMM Do YYYY, h:mm a");
   return article;
 }
 
