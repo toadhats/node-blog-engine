@@ -58,7 +58,7 @@ function processPage(res, pageNo) {
             //console.log("Sorting articles by date (descending)");
             articles = sortByDate(articles);
             //console.log("Articles length before slice: " + articles.length);
-            articles = articles.slice(startIndex, startIndex + articlesPerPage + 1);
+            articles = articles.slice(startIndex, startIndex + articlesPerPage);
             //console.log("Trimmed articles to length " + articles.length);
             res.render('index', { articles: articles, "page": pageNo });
           }
