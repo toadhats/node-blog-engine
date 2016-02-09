@@ -6,6 +6,7 @@ var router = express.Router();
 var fm = require('front-matter');
 var moment = require('moment');
 var junk = require('junk');
+var tcg = require('../tag-cloud-generator.js');
 // Environment variables with default values
 var articlesPerPage = process.env.articlesPerPage || 5; // This doesn't seem to be working properly on heroku, it renders way too many.
 var articlesPath = process.env.articlesPath || 'articles'; // Will probably never change, but just in case
@@ -58,6 +59,10 @@ function processPage(res, pageNo) {
             //console.log("Sorting articles by date (descending)");
             articles = sortByDate(articles);
             //console.log("Articles length before slice: " + articles.length);
+
+            // Creating the tag cloud before we slice down to one page
+            tcg.getUniqueTags(articles);
+
             articles = articles.slice(startIndex, startIndex + articlesPerPage);
             var lastPage = startIndex + articlesPerPage >= filenames.length; // Should eval to true if there's no more articles left to process.
             console.log("Last page? " + lastPage );
