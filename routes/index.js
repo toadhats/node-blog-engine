@@ -44,7 +44,7 @@ function processPage(res, pageNo) {
     if (err) {
       throw err;
     }
-    filenames = filenames.filter(junk.not);
+    filenames = filenames.filter(junk.not); // gets rid of junk like .DS_Store
     // Array.foreach is 95% slower than a regular for loop apparently
     for (var i = 0, len = filenames.length; i < len; i++) {
       // Need to use a closure because we are in async hell rn
@@ -59,8 +59,10 @@ function processPage(res, pageNo) {
             articles = sortByDate(articles);
             //console.log("Articles length before slice: " + articles.length);
             articles = articles.slice(startIndex, startIndex + articlesPerPage);
+            var lastPage = startIndex + articlesPerPage >= filenames.length; // Should eval to true if there's no more articles left to process.
+            console.log("Last page? " + lastPage );
             //console.log("Trimmed articles to length " + articles.length);
-            res.render('index', { articles: articles, "page": pageNo });
+            res.render('index', { articles: articles, "page": pageNo, "lastPage": lastPage });
           }
         }); // end readFile
       })(i); // Immediately invoked function expression. Had to pass the iterator in like this due to async bs.

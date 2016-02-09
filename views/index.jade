@@ -28,7 +28,8 @@ block content
       //- Because we're indexing from 0 at the moment...
     
   div(style="float: right;")
-    a(href='/page/'+nextPage): strong(style="font-size: 200%") Page #{nextPage} >
+    unless lastPage == true
+      a(href='/page/'+nextPage): strong(style="font-size: 200%") Page #{nextPage} >
   
     
 

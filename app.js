@@ -5,11 +5,14 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var helmet = require('helmet');
+// Routes
 var routes = require('./routes/index');
 var articles = require('./routes/articles');
 
 var app = express();
 app.locals.marked = require('marked');
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -22,6 +25,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Helmet
+app.use(helmet.xssFilter());
+app.use(helmet.xframe('sameorigin'));
+app.use(helmet.hidePoweredBy());
+
 
 app.use('/', routes);
 app.use('/articles', articles);
