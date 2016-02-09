@@ -16,6 +16,7 @@ function processArticle(content) {
   if (!fm.test(content)) {
     console.error("Bad content: " + content);
     console.error("Front-matter considers this content invalid!");
+    return;
   }
   var article = fm(content.toString()); // We have an article object
   article.attributes.date = moment(article.attributes.date); // Parsing to date type for consistency/sorting/shenanigans. Remember to format() back to string from within jade
@@ -28,7 +29,12 @@ router.get('/:URN', function(req, res, next) {
   //console.log("Attempting to read " + articleFilePath);
   fs.readFile(articleFilePath, function(err, content) {
     var article = processArticle(content);
-    res.render('articles', { article: article });
+    if (article) {
+      res.render('articles', { article: article});
+    } else {
+      res.status(err.status || 500);
+      res.render('error', {message: "Article not found. Sorry!", error: err });
+    }
   });
 });
 

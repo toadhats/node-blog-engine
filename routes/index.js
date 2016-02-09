@@ -7,7 +7,7 @@ var fm = require('front-matter');
 var moment = require('moment');
 var junk = require('junk');
 // Environment variables with default values
-var articlesPerPage = process.env.articlesPerPage || 5;
+var articlesPerPage = process.env.articlesPerPage || 5; // This doesn't seem to be working properly on heroku, it renders way too many.
 var articlesPath = process.env.articlesPath || 'articles'; // Will probably never change, but just in case
 
 function compareDates(a,b) {
