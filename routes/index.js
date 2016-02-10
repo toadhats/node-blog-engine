@@ -53,9 +53,12 @@ function processPage(res, pageNo) {
       (function(i) {
         var currentFilePath = articlesPath + '/' + filenames[i];
         fs.readFile(currentFilePath, function(err, content) {
+          if (err) {
+            throw err;
+          }
+          
           articles[i] = processArticle(content);
           articles[i].path = currentFilePath.substr(0, currentFilePath.lastIndexOf('.'));//remove the extension
-
           if (i === len - 1 ) {
             //console.log("Sorting articles by date (descending)");
             articles = sortByDate(articles);

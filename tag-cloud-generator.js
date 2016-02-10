@@ -18,7 +18,16 @@ module.exports = {
 
   // Takes an array of articles, returns a Sequence of tag objects {tag: count}
   getTagsWithCount: function(articles) {
-    var tags = Lazy(articles).pluck("attributes").pluck("tags").flatten().compact().sort().countBy()
+    var lazyArticles = Lazy(articles).compact(); // compact() MIGHT be enough to solve the problem? It's a start.
+    if (lazyArticles.isEmpty()) {
+      console.error("getTagsWithCount: Got an empty articles array. Abort!.");;
+    } else if (lazyArticles.first().attributes == undefined) {
+      console.error("getTagsWithCount: Attributes of first article are undefined. Abort!");
+    } else if (lazyArticles.last().attributes == undefined) {
+      console.error("getTagsWithCount: Attributes of last article are undefined. Abort!");
+    }
+
+    var tags = Lazy(articles).compact().pluck("attributes").pluck("tags").flatten().compact().sort().countBy()
     return tags // returns a Lazy.js Sequence
   },
 
