@@ -18,9 +18,10 @@ block content
 
   ul
     each article in articles
-      a(href='/'+article.path)
-        +postSummary(article)
-      hr
+      if article
+        a(href='/'+article.path)
+          +postSummary(article)
+        hr
       
   div(style="float: left")
     unless currentPage == 1
