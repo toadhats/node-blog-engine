@@ -6,6 +6,7 @@ var router = express.Router();
 var fm = require('front-matter');
 var moment = require('moment');
 var junk = require('junk');
+var Lazy = require('lazy.js');
 var tcg = require('../tag-cloud-generator.js');
 // Environment variables with default values
 var articlesPerPage = process.env.articlesPerPage || 5; // This doesn't seem to be working properly on heroku, it renders way too many.
@@ -61,12 +62,12 @@ function processPage(res, pageNo) {
             //console.log("Articles length before slice: " + articles.length);
 
             // Creating the tag cloud before we slice down to one page
-            tcg.getUniqueTags(articles);
+            var tags = tcg.getTagsWithCount(articles);
+            var formattedTags = tcg.formatForTagCloud(tags);
 
             articles = articles.slice(startIndex, startIndex + articlesPerPage);
             var lastPage = startIndex + articlesPerPage >= filenames.length; // Should eval to true if there's no more articles left to process.
             console.log("Last page? " + lastPage );
-            //console.log("Trimmed articles to length " + articles.length);
             res.render('index', { articles: articles, "page": pageNo, "lastPage": lastPage });
           }
         }); // end readFile
