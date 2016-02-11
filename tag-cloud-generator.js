@@ -20,11 +20,11 @@ module.exports = {
   getTagsWithCount: function(articles) {
     var lazyArticles = Lazy(articles).compact(); // compact() MIGHT be enough to solve the problem? It's a start.
     if (lazyArticles.isEmpty()) {
-      console.error("getTagsWithCount: Got an empty articles array. Abort!.");;
+      console.error("getTagsWithCount: Got an empty articles array!");;
     } else if (lazyArticles.first().attributes == undefined) {
-      console.error("getTagsWithCount: Attributes of first article are undefined. Abort!");
+      console.error("getTagsWithCount: Attributes of first article are undefined!");
     } else if (lazyArticles.last().attributes == undefined) {
-      console.error("getTagsWithCount: Attributes of last article are undefined. Abort!");
+      console.error("getTagsWithCount: Attributes of last article are undefined!");
     }
 
     var tags = Lazy(articles).compact().pluck("attributes").pluck("tags").flatten().compact().sort().countBy()
@@ -36,7 +36,7 @@ module.exports = {
     // console.log(tags.keys().each(function(x){console.log(x);}));
     var keysToJSON = tags.keys().map(function(x){return {"tagName": x, "count": tags.get(x)};}).toArray();
     var json = JSON.stringify(keysToJSON);
-    console.log(json);
+    //console.log(json);
     return json;
   }
 

@@ -47,7 +47,8 @@ function processPage(res, pageNo) {
       throw err;
     }
     filenames = filenames.filter(junk.not); // gets rid of junk like .DS_Store
-    // Array.foreach is 95% slower than a regular for loop apparently
+    var filesRemaining = filenames.length;// Keeping track of how many files we've processed
+    console.log("filesRemaining = " + filesRemaining);
     for (var i = 0, len = filenames.length; i < len; i++) {
       // Need to use a closure because we are in async hell rn
       (function(i) {
@@ -56,13 +57,16 @@ function processPage(res, pageNo) {
           if (err) {
             throw err;
           }
-          
+
           articles[i] = processArticle(content);
           articles[i].path = currentFilePath.substr(0, currentFilePath.lastIndexOf('.'));//remove the extension
-          if (i === len - 1 ) {
-            //console.log("Sorting articles by date (descending)");
+          // We've processed an article, so decrement filesRemaining
+          filesRemaining -= 1;
+          console.log("Files remaining: " + filesRemaining);
+          if (filesRemaining === 0 ) {
+            console.log("No files remaining.");
             articles = sortByDate(articles);
-            //console.log("Articles length before slice: " + articles.length);
+
 
             // Creating the tag cloud before we slice down to one page
             var tags = tcg.getTagsWithCount(articles);
