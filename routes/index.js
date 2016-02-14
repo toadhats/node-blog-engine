@@ -41,14 +41,14 @@ function processArticle(content) {
 function processPage(res, pageNo) {
   var articles = [];
   var startIndex = (pageNo - 1) * articlesPerPage;
-  console.log("Page " + pageNo);
+  // console.log("Page " + pageNo);
   fs.readdir(articlesPath, function(err, filenames) {
     if (err) {
       throw err;
     }
     filenames = filenames.filter(junk.not); // gets rid of junk like .DS_Store
+
     var filesRemaining = filenames.length;// Keeping track of how many files we've processed
-    console.log("filesRemaining = " + filesRemaining);
     for (var i = 0, len = filenames.length; i < len; i++) {
       // Need to use a closure because we are in async hell rn
       (function(i) {
@@ -57,24 +57,18 @@ function processPage(res, pageNo) {
           if (err) {
             throw err;
           }
-
           articles[i] = processArticle(content);
           articles[i].path = currentFilePath.substr(0, currentFilePath.lastIndexOf('.'));//remove the extension
           // We've processed an article, so decrement filesRemaining
           filesRemaining -= 1;
-          console.log("Files remaining: " + filesRemaining);
           if (filesRemaining === 0 ) {
-            console.log("No files remaining.");
             articles = sortByDate(articles);
-
-
             // Creating the tag cloud before we slice down to one page
             var tags = tcg.getTagsWithCount(articles);
             var formattedTags = tcg.formatForTagCloud(tags);
 
             articles = articles.slice(startIndex, startIndex + articlesPerPage);
             var lastPage = startIndex + articlesPerPage >= filenames.length; // Should eval to true if there's no more articles left to process.
-            console.log("Last page? " + lastPage );
             res.render('index', { articles: articles, "page": pageNo, "lastPage": lastPage });
           }
         }); // end readFile
