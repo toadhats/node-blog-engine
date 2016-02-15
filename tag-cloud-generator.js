@@ -20,15 +20,15 @@ module.exports = {
   getTagsWithCount: function(articles) {
     var lazyArticles = Lazy(articles).compact(); // compact() MIGHT be enough to solve the problem? It's a start.
     if (lazyArticles.isEmpty()) {
-      console.error("getTagsWithCount: Got an empty articles array!");;
-    } else if (lazyArticles.first().attributes == undefined) {
+      console.error("getTagsWithCount: Got an empty articles array!");
+    } else if (lazyArticles.first().attributes === undefined) {
       console.error("getTagsWithCount: Attributes of first article are undefined!");
-    } else if (lazyArticles.last().attributes == undefined) {
+    } else if (lazyArticles.last().attributes === undefined) {
       console.error("getTagsWithCount: Attributes of last article are undefined!");
     }
 
-    var tags = Lazy(articles).compact().pluck("attributes").pluck("tags").flatten().compact().sort().countBy()
-    return tags // returns a Lazy.js Sequence
+    var tags = Lazy(articles).compact().pluck("attributes").pluck("tags").flatten().compact().sort().countBy();
+    return tags; // returns a Lazy.js Sequence
   },
 
   // Formats a Sequence of tag objects into the specific kind of JSON array for spoonfeeding to fussy baby tag-cloud.js
