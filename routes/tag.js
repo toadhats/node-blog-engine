@@ -13,6 +13,10 @@ var tcg = require('../tag-cloud-generator.js');
 var articlesPerPage = process.env.articlesPerPage || 5; // This doesn't seem to be working properly on heroku, it renders way too many.
 var articlesPath = process.env.articlesPath || 'articles'; // Will probably never change, but just in case
 
+// As per the new way of building the index, used module-scoped variables to cache as much of this work as possible.
+// Then we're not doing O(n^2) operations every time a user requests a particular tag
+// I feel like this is the quintessential case for a time-memory tradeoff
+
 // Returns a promise containing all the filenames in the articles dir
 var getAllFilenames = function () {
     return fs.readdirAsync(articlesPath);

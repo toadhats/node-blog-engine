@@ -12,6 +12,14 @@ var tcg = require('../tag-cloud-generator.js');
 var articlesPerPage = process.env.articlesPerPage || 5; // This doesn't seem to be working properly on heroku, it renders way too many.
 var articlesPath = process.env.articlesPath || 'articles'; // Will probably never change, but just in case
 
+// ** Module-scoped caching for articles. **
+
+// Load all articles from filesystem into module-scoped variable here
+// Change processPage to return the array of articles instead of rendering it, refactor the function while we're at it.
+// var articles = loadArticles()
+// Set a timer to load them again after a set period (and reset the timer)
+// Then when the user requests the index route, get the array from here, don't rebuild it. Should radically reduce time taken when index is requested
+
 function compareDates(a,b) {
   if(a.attributes.date.isBefore(b.attributes.date)) {return -1;}
   if(b.attributes.date.isBefore(a.attributes.date)) {return 1;}
