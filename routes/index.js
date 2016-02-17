@@ -1,6 +1,8 @@
 "use strict";
 var express = require('express');
-var fs = require('fs');
+var Promise = require("bluebird");
+var fs = require('fs'); // TODO: remove this once I've migrated to using promises
+var fsPromise = Promise.promisifyAll(require('fs'));
 var path = require("path");
 var router = express.Router();
 var fm = require('front-matter');
@@ -16,7 +18,7 @@ var articlesPath = process.env.articlesPath || 'articles'; // Will probably neve
 
 // Load all articles from filesystem into module-scoped variable here
 // Change processPage to return the array of articles instead of rendering it, refactor the function while we're at it.
-// var articles = loadArticles()
+
 // Set a timer to load them again after a set period (and reset the timer)
 // Then when the user requests the index route, get the array from here, don't rebuild it. Should radically reduce time taken when index is requested
 
@@ -26,9 +28,29 @@ function compareDates(a,b) {
   return 0;
 }
 
+// This function belongs in the mutable-state garabage pile
 function sortByDate(articleArray) {
   return articleArray.sort(compareDates).reverse();
 }
+
+// returns the dejunked filename list as a Sequence
+function getAllFilenames() {
+  console.log("Getting all filenames.");
+    return Lazy(fsPromise.readdirAsync(articlesPath).then(function(filenames) {
+      console.log("getAllFilenames returned: " + filenames); // IT BREAKS AFTER HERE LOL
+      return filenames;
+    }));
+}
+
+// Accepts a sequence of filenames and returns a sequence of objects containing article contents and their filenames
+function getAllFiles(filenames) {
+  console.log("Retrieving all files.");
+  return Promise.all(filenames.map(function(filename) {
+    return fsPromise.readFileAsync(articlesPath + '/' + filename, 'utf8').then(function(content) {
+        return {content: content, filename: filename};
+    });
+})).then(Lazy);
+} // We're out of async jail now
 
 // Processes an article file to create an article object
 function processArticle(content) {
@@ -44,6 +66,27 @@ function processArticle(content) {
   article.attributes.date = moment(article.attributes.date); // Parsing to date type for consistency/sorting/shenanigans. Remember to format() back to string from within jade
   return article;
 }
+
+// Accepts a sequence of article file data and returns a sorted sequence of article objects
+function parseArticles(files) {
+  console.log("Parsing all articles.");
+  return files.map( function(file) {
+    var article = processArticle(file.content);
+    article.path = path.basename(file.filename, path.extname(file.filename));
+    return article;
+  });//.sort(compareDates, true); // toProcess is a sequence of article objects with nulls culled.
+}
+
+// Our whole article fetching/parsing workflow is performed by this function, returns a complete 'cache state', e.g. feed this to the module-level articles array.
+function refreshArticles() {
+  console.log("Refreshing article cache from filesystem...");
+  return parseArticles(getAllFiles(getAllFilenames()));
+}
+
+// This breaks everything in the ugliest way possible and will be hell to debug. Tomorrow.
+//var articles = refreshArticles(); // This should actually begin the parsing workflow, should trigger on startup
+
+// ** OLD VERSION **
 
 // New version of processAllArticles that will handle pagination of the index.
 function processPage(res, pageNo) {
