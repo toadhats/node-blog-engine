@@ -100,18 +100,34 @@ function cacheArticles() {
 // This gets called for the first time on server startup
 cacheArticles();
 
+// Watching for changes to the articles directory
+fs.watch(articlesPath, (event, filename) => {
+  console.log(`event is: ${event}`);
+  if (filename) {
+    console.log(`filename provided: ${filename}`);
+  } else {
+    console.log('filename not provided');
+  }
+});
 //New page load function using the cache
 function processPageWithCache(res, pageNo) {
   if (!storedArticles) {
-    console.error('Articles cache is empty.');
-    cacheArticles();
+    console.error('Articles cache is empty. Rebuilding...');
+    cacheArticles().then(processPageWithCache(res, pageNo));
   } else {
     // Rendering the index from cache
+    console.log(storedArticles.size());
+    var maxPage = Math.ceil(storedArticles.size() / articlesPerPage);
+    var lastPage = pageNo >= maxPage; // Should eval to true if there's no more articles left to process.
+    pageNo = pageNo > maxPage ? maxPage : pageNo;
     var startIndex = (pageNo - 1) * articlesPerPage;
+    console.log("maxPage =",maxPage);
+    console.log("pageNo =", pageNo);
     var articles = storedArticles.toArray().slice(startIndex, startIndex + articlesPerPage);
-    var lastPage = startIndex + articlesPerPage >= storedArticles.length; // Should eval to true if there's no more articles left to process.
-    res.render('index', { articles: articles, "page": pageNo, "lastPage": lastPage });
+    //console.log(articles);
+    console.log(pageNo === maxPage);
 
+    res.render('index', { articles: articles, "page": pageNo, "lastPage": lastPage });
   }// End cache check else
 }
 
