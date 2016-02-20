@@ -48,7 +48,7 @@ function getAllFiles(filenames) {
     return fs.readFileAsync(articlesPath + '/' + filename, 'utf8').then(function(content) {
       return {content: content, filename: filename};
     });
-  }));
+  })).then(Lazy);
 }
 
 // Processes an article file to create an article object
@@ -71,22 +71,50 @@ function parseArticles(files) {
   console.log("Parsing all articles.");
   return files.map( function(file) {
     var article = processArticle(file.content);
-    article.path = path.basename(file.filename, path.extname(file.filename));
+    article.path = path.join('articles',path.basename(file.filename, path.extname(file.filename)));
     return article;
-  });//.sort(compareDates, true); // toProcess is a sequence of article objects with nulls culled.
+  }).sort(compareDates, true);
 }
 
 // Our whole article fetching/parsing workflow is performed by this function, returns a complete 'cache state', e.g. feed this to the module-level articles array.
 function refreshArticles() {
-  console.log("Refreshing article cache from filesystem...");
-  return parseArticles(getAllFiles(getAllFilenames()));
+  console.log(moment().format('YYYY/M/D|HH:mm:ss|'), "Refreshing article cache from filesystem...");
+  console.time('Cache refreshed');
+  return getAllFilenames().then(getAllFiles).then(parseArticles);
+}
+// The module-level storage for parsed articles. Updated via cacheArticles.
+var storedArticles = [];
+
+// Actually updates the module state. Returns true on success, because I hate an empty return. Side effects make me nauseous but it's better than having to treat the articles as a promise everywhere, since they really should be fulfilled within less than a second of server start.
+function cacheArticles() {
+  refreshArticles().then(function(result) {
+    storedArticles = Lazy(result);
+    console.timeEnd('Cache refreshed');
+    return true;
+  }).catch(function(err) {
+    console.error("Failed to update article cache.");
+    console.error(err);
+    return false;
+  });
+}
+// This gets called for the first time on server startup
+cacheArticles();
+
+//New page load function using the cache
+function processPageWithCache(res, pageNo) {
+  if (!storedArticles) {
+    console.error('Articles cache is empty.');
+    cacheArticles();
+  } else {
+    // Rendering the index from cache
+    var startIndex = (pageNo - 1) * articlesPerPage;
+    var articles = storedArticles.toArray().slice(startIndex, startIndex + articlesPerPage);
+    var lastPage = startIndex + articlesPerPage >= storedArticles.length; // Should eval to true if there's no more articles left to process.
+    res.render('index', { articles: articles, "page": pageNo, "lastPage": lastPage });
+
+  }// End cache check else
 }
 
-// This breaks everything in the ugliest way possible and will be hell to debug. Tomorrow.
-// var articles = refreshArticles(); // This should actually begin the parsing workflow, should trigger on startup
-
-//console.log(getAllFilenames());
-getAllFilenames().tap(console.log).then(getAllFiles).then(console.log);
 
 
 
@@ -137,12 +165,13 @@ function processPage(res, pageNo) {
 
 /* GET article index. */
 router.get('/', function(req, res, next) {
-  processPage(res, 1);
+  processPageWithCache(res, 1);
+  //processPage(res, 1);
 });
 
 /* GET paginated article index. */
 router.get('/page/:pageNo', function(req, res, next) {
-  processPage(res, req.params.pageNo);
+  processPageWithCache(res, req.params.pageNo);
 });
 
 module.exports = router;
