@@ -1,8 +1,7 @@
 "use strict";
 var express = require('express');
 var Promise = require("bluebird");
-var fs = require('fs'); // TODO: remove this once I've migrated to using promises
-var fsPromise = Promise.promisifyAll(require('fs'));
+var fs = Promise.promisifyAll(require('fs'));
 var path = require("path");
 var router = express.Router();
 var fm = require('front-matter');
@@ -36,21 +35,21 @@ function sortByDate(articleArray) {
 // returns the dejunked filename list as a Sequence
 function getAllFilenames() {
   console.log("Getting all filenames.");
-    return Lazy(fsPromise.readdirAsync(articlesPath).then(function(filenames) {
-      console.log("getAllFilenames returned: " + filenames); // IT BREAKS AFTER HERE LOL
-      return filenames;
-    }));
+    return fs.readdirAsync(articlesPath);
 }
 
 // Accepts a sequence of filenames and returns a sequence of objects containing article contents and their filenames
 function getAllFiles(filenames) {
   console.log("Retrieving all files.");
+  // console.log(filenames);
+  //filenames.then(function(x) {console.log(x);}); // This works exactly how I need it to
+
   return Promise.all(filenames.map(function(filename) {
-    return fsPromise.readFileAsync(articlesPath + '/' + filename, 'utf8').then(function(content) {
-        return {content: content, filename: filename};
+    return fs.readFileAsync(articlesPath + '/' + filename, 'utf8').then(function(content) {
+      return {content: content, filename: filename};
     });
-})).then(Lazy);
-} // We're out of async jail now
+  }));
+}
 
 // Processes an article file to create an article object
 function processArticle(content) {
@@ -84,7 +83,12 @@ function refreshArticles() {
 }
 
 // This breaks everything in the ugliest way possible and will be hell to debug. Tomorrow.
-//var articles = refreshArticles(); // This should actually begin the parsing workflow, should trigger on startup
+// var articles = refreshArticles(); // This should actually begin the parsing workflow, should trigger on startup
+
+//console.log(getAllFilenames());
+getAllFilenames().tap(console.log).then(getAllFiles).then(console.log);
+
+
 
 // ** OLD VERSION **
 
