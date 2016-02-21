@@ -10,12 +10,12 @@ var moment = require('moment');
 
 function processArticle(content) {
   if (!content) {
-    console.error("Didn't get any article content!");
+    console.error("processArticle didn't find any content to process!");
     return;
   }
   if (!fm.test(content)) {
-    console.error("Bad content: " + content);
-    console.error("Front-matter considers this content invalid!");
+    console.error("Bad content:", content);
+    console.error("Front-matter considers this content invalid.");
     return;
   }
   var article = fm(content.toString()); // We have an article object

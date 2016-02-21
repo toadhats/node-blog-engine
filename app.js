@@ -9,9 +9,10 @@ var helmet = require('helmet');
 // Routes
 var routes = require('./routes/index');
 var articles = require('./routes/articles');
+var tag = require('./routes/tag');
 
 var app = express();
-app.locals.marked = require('marked');
+app.locals.marked = require('marked'); // So Jade can access it
 
 
 // view engine setup
@@ -34,6 +35,7 @@ app.use(helmet.hidePoweredBy());
 
 app.use('/', routes);
 app.use('/articles', articles);
+app.use('/tag', tag);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
