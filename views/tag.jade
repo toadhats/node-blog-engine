@@ -12,7 +12,7 @@ mixin postSummary(post)
   unless !post.attributes.tags
     div(style="float: left") 
       each tag in post.attributes.tags
-        a(href='tag/' + tag)
+        a(href='/tag/' + tag)
           kbd(style={'background-color': '#f9f2f4', 'color': '#333'}) #{tag}
         | &nbsp;
   
