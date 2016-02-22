@@ -1,18 +1,18 @@
 "use strict";
 var express = require('express');
 var Promise = require("bluebird");
-var fs = Promise.promisifyAll(require('fs')); // "Promisified" version of fs – no more callbacks.
+var fs = Promise.promisifyAll(require('fs'));
 var path = require("path");
 var router = express.Router();
 var fm = require('front-matter');
 var moment = require('moment');
 var junk = require('junk');
 var Lazy = require('lazy.js');
-var tcg = require('../tag-cloud-generator.js');
+//var tcg = require('../tag-cloud-generator.js');
 
 // Environment variables with default values
-var articlesPerPage = process.env.articlesPerPage || 5; // This doesn't seem to be working properly on heroku, it renders way too many.
-var articlesPath = process.env.articlesPath || 'articles'; // Will probably never change, but just in case
+var articlesPerPage = process.env.articlesPerPage || 5;
+var articlesPath = process.env.articlesPath || 'articles'; // Will probably never change
 
 function compareDates(a,b) {
   if(a.attributes.date.isBefore(b.attributes.date)) {return -1;}
@@ -110,7 +110,6 @@ router.get('/:tag', function(req, res, next) {
     console.timeEnd('Query time');
     res.render('tag', {articles: arr, queryTag: queryTag});
   });
-
 });
 
 module.exports = router;
