@@ -2,7 +2,7 @@
 layout: post
 title: Duplicate keys in YAML front matter
 description: Duplicate keys are a pain to deal with. How do I decide between taking responsibility for them, versus making the user responsible for not including any?
-date:
+date: 2016-02-03
 author:
   name: Jonathan Warner
   mail: limule@icloud.com
