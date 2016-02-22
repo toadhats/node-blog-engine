@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Test post #1"
-description: "This is the first test post, the 'mini devblog' has been moved over to be served up by this blog engine itself.."
+description: "This is the first test post, the 'mini devblog' has been moved over to be served up by this blog engine itself."
 date: 2016-02-22 19:13
 author:
     name: Jonathan Warner
