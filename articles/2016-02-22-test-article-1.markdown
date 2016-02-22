@@ -12,4 +12,4 @@ tags:
 - tags
 - test
 ---
-This is the first test post, while I'm working out how to quickly create article templates, et cetera.
+This is the first test post, while I'm working out how to quickly create article templates, et cetera. The current front matter format is working fine, now we can turn it into a snippet to save time.
