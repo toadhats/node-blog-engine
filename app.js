@@ -13,6 +13,7 @@ var tag = require('./routes/tag');
 
 var app = express();
 app.locals.marked = require('marked'); // So Jade can access it
+app.locals.querystring = require('querystring');
 
 
 // view engine setup
