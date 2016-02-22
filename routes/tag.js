@@ -58,12 +58,12 @@ function processArticle(content) {
   var article = fm(content.toString()); // We have an article object
   article.attributes.date = moment(article.attributes.date); //Remember to format() back to string from within jade
   // debug junk
-  var gotTags = article.attributes.tags;
-  if (gotTags){
-    console.log("Got tags:", gotTags);
-  } else {
-    console.log("This article has no tags:", article.path);
-  }
+  // var gotTags = article.attributes.tags;
+  // if (gotTags){
+  //   console.log("Got tags:", gotTags);
+  // } else {
+  //   console.log("This article has no tags:", article.path);
+  // }
 
   return article;
 }
@@ -90,24 +90,27 @@ function hasTag(article, tag) {
   return Lazy(article.attributes.tags).contains(tag);
 }
 
-// Trying some real craziness here...
 function getTaggedArticles(articles, tag) {
 console.log(`Looking for articles with tag "${tag}"`);
   return articles.filter(function (article) {
-    return hasTag(article, tag);
+    if (hasTag(article, tag)) {
+    return true;
+  }
   });
 }
 
 router.get('/:tag', function(req, res, next) {
   console.time('Query time');
   var queryTag = req.params.tag;
-  getAllFilenames().then(getAllFiles).then(parseArticles).then(function (articles) {
+  getAllFilenames().then(getAllFiles).then(parseArticles).tap(console.log).then(function (articles) {
     return getTaggedArticles(articles, queryTag);
   }).then(function (results) {
+    var arr = results.toArray();
     console.log(`Got ${results.size()} results for tag "${queryTag}"`);
     console.timeEnd('Query time');
-    res.render('tag', {articles: results, queryTag: queryTag});
+    res.render('tag', {articles: arr, queryTag: queryTag});
   });
+
 });
 
 module.exports = router;
