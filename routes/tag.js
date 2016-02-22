@@ -102,7 +102,7 @@ console.log(`Looking for articles with tag "${tag}"`);
 router.get('/:tag', function(req, res, next) {
   console.time('Query time');
   var queryTag = req.params.tag;
-  getAllFilenames().then(getAllFiles).then(parseArticles).tap(console.log).then(function (articles) {
+  getAllFilenames().then(getAllFiles).then(parseArticles).then(function (articles) {
     return getTaggedArticles(articles, queryTag);
   }).then(function (results) {
     var arr = results.toArray();
